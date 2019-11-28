@@ -1,0 +1,18 @@
+sudo: required
+dist: trusty
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly"
+# command to install dependencies
+install:
+ - wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
+ - bzip2 -d phantomjs-2.1.1-linux-x86_64.tar.bz2
+ - tar -xvf phantomjs-2.1.1-linux-x86_64.tar
+ - sudo cp phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+script: 
+ - python -m phantomjs.test.test
+
