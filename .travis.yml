@@ -14,5 +14,5 @@ install:
  - tar -xvf phantomjs-2.1.1-linux-x86_64.tar
  - sudo cp phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
 script: 
- - python -m phantomjs.test.test
+ - python -m phantomjs.testio
 

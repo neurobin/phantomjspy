@@ -33,28 +33,47 @@ var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3000, //< Default Max Tim
 var system = require('system');
 var page   = require('webpage').create();
 // system.args[0] is the filename, so system.args[1] is the first real argument
-var url    = system.args[1];
-var selector = system.args[2];
-var timeout = system.args[3];
+var json = JSON.parse(system.args[1]);
+var url    = json.url;
+var selector = json.selector;
+var max_wait = json.max_wait || 30000;
+var min_wait = json.min_wait || 0;
+var resource_timeout = json.resource_timeout || 3000;
+var headers = json.headers || {};
+var cookies = json.cookies || [];
+var output_type = json.output_type || 'html';
+var dummy_selector = '#dummy-dummy-____dummy';
+
+var printOutput = function(page){
+    if(output_type.toLowerCase() == 'html'){
+        console.log(page.content);
+    }else{
+        console.log(page.plainText);
+    }
+}
+
+// sane defaults
+if(!selector){
+    selector = undefined;
+    page.onLoadFinished = function(){
+        if(!!min_wait){
+            var testFx = function (){return false;};
+            var onReady = function (){
+                printOutput(page);
+                phantom.exit();
+            };
+            waitFor(testFx, onReady, min_wait);
+        }else{
+            printOutput(page);
+            phantom.exit();
+        }
+    };
+}
 
 //settings
-page.settings.resourceTimeout = 3000;
-page.settings.userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.72 Safari/537.36';
+page.settings.resourceTimeout = resource_timeout;
 
-page.customHeaders = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
-    "Sec-Fetch-Mode": "navigate",
-    'Sec-Fetch-Site': 'same-origin',
-    'Upgrade-Insecure-Requests': '1',
-  };
-  
-
-var cookies = [
-    {'name': '_Country', 'value': 'US'},
-    {'name': '_Currency', 'value': 'USD'},
-    {'name': '_Country_Name', 'value': 'United+States'},
-    {'name': 'Drupal.visitor.commerce_currency', 'value': 'USD'}
-];
+page.customHeaders = headers;
 
 for(var i in cookies){
     page.addCookie(cookies[i]);
@@ -95,10 +114,9 @@ for(var i in cookies){
 page.open(url, function (status) {
     if(status == 'success'){
         //~ console.log('Selector: '+selector);
-        //~ console.log('Timeout: '+ timeout/1000+ ' seconds');
+        //~ console.log('Timeout: '+ max_wait/1000+ ' seconds');
         var testFx = function (){
             return page.evaluate(function(selector) {
-                if(selector == '.dummy') return false;
                 var isVisible = function(elem){
                     if(!!elem){
                         return !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
@@ -110,10 +128,10 @@ page.open(url, function (status) {
             }, selector);
         };
         var onReady = function (){
-            console.log(page.content);
+            printOutput(page);
             phantom.exit();
         };
-        waitFor(testFx, onReady, timeout);
+        waitFor(testFx, onReady, max_wait);
         // phantom.exit();
     } else{
         console.log("E: Phantomjs failed to open page: " + url);

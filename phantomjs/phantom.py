@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 import subprocess as sbp
 import re
 import logging
 
+class Keys(object):
+    url = 'url'
+    proxy = 'proxy'
+    proxy_type = 'proxy_type'
+    selector = 'selector'
+    max_wait = 'max_wait'
+    min_wait = 'min_wait'
+    js_path = 'js_path'
+    ssl_verify = 'ssl_verify'
+    load_images = 'load_images'
 
 class Phantom(object):
 
@@ -13,7 +24,7 @@ class Phantom(object):
         self.exec_path = exec_path
         self.logger = logger
         if not self.logger:
-            self.logger = logging.getLogger(self.__class__)
+            self.logger = logging.getLogger(__name__)
 
     def syscall(self, cmd):
         """cmd is a list comprising the command and the arguments
@@ -23,13 +34,24 @@ class Phantom(object):
             output, errors = proc.communicate(timeout=self.process_timeout)
             # return sbp.check_output(cmd)
             self.logger.error(errors)
-            return output
+            return output.decode('utf-8')
         except sbp.CalledProcessError as e:
             self.logger.exception("E: PhantomJS command failed")
         return ''
 
-    def download_page(self, url, proxy='', proxy_type='', selector='', timeout='30000', js_path=None, ssl_verify=True):
-        cmd = [self.exec_path, '--load-images=false', ]
+    def download_page(self, conf):
+        confs = json.dumps(conf)
+        proxy = conf.get(Keys.proxy, '')
+        proxy_type = conf.get(Keys.proxy_type, '')
+        js_path = conf.get(Keys.js_path, '')
+        ssl_verify = conf.get(Keys.ssl_verify, True)
+        load_images = conf.get(Keys.load_images, False)
+
+        cmd = [self.exec_path]
+
+        if not load_images:
+            cmd.append('--load-images=false')
+
         if not ssl_verify:
             cmd.append('--ignore-ssl-errors=true')
 
@@ -39,18 +61,15 @@ class Phantom(object):
             cmd.append("--proxy=%s" % (proxy,))
             
         if not js_path:
-            if selector:
-                cmd.extend([os.path.join(os.path.dirname(__file__),
-                                         'get_source_wait_for.js'), url, selector, timeout])
-            else:
-                cmd.extend(
-                    [os.path.join(os.path.dirname(__file__), 'get_source.js'), url])
+            cmd.extend([os.path.join(os.path.dirname(__file__), 'get_source_wait_for.js'), confs])
         else:
-            cmd.extend([js_path, url])
-        self.logger.info(cmd)
+            cmd.extend([js_path, confs])
+
+        self.logger.debug(cmd)
+        
         output = self.syscall(cmd)
         # output = self.syscall(['phantomjs', '-h',])
-        # self.logger.info(output)
+        # self.logger.debug(output)
         return output
     
     @staticmethod

@@ -1,11 +1,3 @@
-[![Build Status](https://travis-ci.org/neurobin/phantomjs.svg?branch=release)](https://travis-ci.org/neurobin/phantomjs)
-
-PhantomJS wrapper in Python
-
-
-# Usage
-
-```python
 
 from phantomjs import Phantom
 
@@ -33,4 +25,5 @@ conf = {
 
 
 output = phantom.download_page(conf)
-```
+
+print(output)
