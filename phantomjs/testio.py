@@ -21,6 +21,9 @@ conf = {
         {'name': '_Country', 'value': 'US', 'domain': '.google.com',},
         {'name': '_Currency', 'value': 'USD', 'domain': '.google.com',},
     ],
+    'functions': [
+        'function(){window.location.replace("http://icanhazip.com/");}',
+    ],
 }
 
 

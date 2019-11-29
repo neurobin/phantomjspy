@@ -15,6 +15,30 @@ pip install phantomjs
 
 # Usage
 
+## Using with a custom phantomjs script:
+
+```python
+
+from phantomjs import Phantom
+
+phantom = Phantom()
+
+conf = {
+    'url': 'http://example.com/',   # Mandatory field
+}
+output = phantom.download_page(conf, js_path='/my/phantomjs/script/path')
+```
+
+In your phantomjs script, you can take the url as:
+
+```javascript
+var system = require('system');
+var json = JSON.parse(system.args[1]);
+var url = json.url;
+```
+
+## Using the default phantomjs script provided with this package:
+
 ```python
 
 from phantomjs import Phantom
@@ -38,6 +62,9 @@ conf = {
     'cookies': [
         {'name': '_Country', 'value': 'US', 'domain': '.google.com',},
         {'name': '_Currency', 'value': 'USD', 'domain': '.google.com',},
+    ],
+    'functions': [
+        'function(){window.location.replace("http://icanhazip.com/");}',
     ],
 }
 

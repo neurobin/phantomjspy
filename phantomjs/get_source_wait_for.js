@@ -42,6 +42,7 @@ var resource_timeout = json.resource_timeout || 3000;
 var headers = json.headers || {};
 var cookies = json.cookies || [];
 var output_type = json.output_type || 'html';
+var functions = json.functions || [];
 var dummy_selector = '#dummy-dummy-____dummy';
 
 var printOutput = function(page){
@@ -115,6 +116,9 @@ page.open(url, function (status) {
     if(status == 'success'){
         //~ console.log('Selector: '+selector);
         //~ console.log('Timeout: '+ max_wait/1000+ ' seconds');
+        functions.forEach(function(func, idx){
+            page.evaluateJavaScript(func);
+        });
         var testFx = function (){
             return page.evaluate(function(selector) {
                 var isVisible = function(elem){

@@ -39,13 +39,8 @@ class Phantom(object):
             self.logger.exception("E: PhantomJS command failed")
         return ''
 
-    def download_page(self, conf):
+    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True, load_images=False):
         confs = json.dumps(conf)
-        proxy = conf.get(Keys.proxy, '')
-        proxy_type = conf.get(Keys.proxy_type, '')
-        js_path = conf.get(Keys.js_path, '')
-        ssl_verify = conf.get(Keys.ssl_verify, True)
-        load_images = conf.get(Keys.load_images, False)
 
         cmd = [self.exec_path]
 
