@@ -4,7 +4,8 @@ PhantomJS wrapper in Python
 
 # Pre requisites
 
-Install `phantomjs` command line tool.
+1. **phantomjs:** `phantomjs` command line tool.
+2. **Python 3**
 
 # Install
 
