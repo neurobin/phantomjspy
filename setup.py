@@ -36,10 +36,7 @@ setup(name="phantomjs",
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
-        'Topic :: Text Processing :: Filters',
-        'Topic :: Text Processing :: Markup',
       ],
       install_requires=[],
-test_suite="phantomjs.test.test")
+test_suite="phantomjs.testio")

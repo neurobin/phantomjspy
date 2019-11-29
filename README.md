@@ -1,7 +1,16 @@
-[![Build Status](https://travis-ci.org/neurobin/phantomjs.svg?branch=release)](https://travis-ci.org/neurobin/phantomjs)
+[![Build Status](https://travis-ci.org/neurobin/phantomjspy.svg?branch=release)](https://travis-ci.org/neurobin/phantomjspy)
 
 PhantomJS wrapper in Python
 
+# Pre requisites
+
+Install `phantomjs` command line tool.
+
+# Install
+
+```bash
+pip install phantomjs
+```
 
 # Usage
 
