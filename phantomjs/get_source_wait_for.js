@@ -71,7 +71,10 @@ if(!selector){
     };
 }
 
-//settings
+// //settings
+// page.settings.mode = 'w';
+// page.settings.charset = 'UTF-8';
+page.settings.encoding = 'utf8';
 page.settings.resourceTimeout = resource_timeout;
 
 page.customHeaders = headers;

@@ -19,5 +19,5 @@ conf.update(json.loads(sys.argv[1]))
 
 
 if __name__ == '__main__':
-    a = phantom.download_page(conf)
+    a = phantom.download_page(conf, ssl_verify=False)
     print(a)

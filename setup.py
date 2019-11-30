@@ -39,4 +39,5 @@ setup(name="phantomjs",
         'Programming Language :: Python :: 3',
       ],
       install_requires=[],
+      include_package_data=True,
 test_suite="phantomjs.testio")
