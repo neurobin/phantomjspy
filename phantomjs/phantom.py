@@ -30,11 +30,12 @@ class Phantom(object):
         """cmd is a list comprising the command and the arguments
         """
         try:
-            proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE, encoding='utf-8')
+            proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)
             output, errors = proc.communicate(timeout=self.process_timeout)
             # return sbp.check_output(cmd)
             self.logger.error(errors)
-            return output
+            if output:
+                return output.decode('utf-8')
             # import sys
             # print(sys.stdout.encoding)
             # proc = sbp.run(cmd, stdout=sbp.PIPE, encoding='utf-8', timeout=self.process_timeout)
