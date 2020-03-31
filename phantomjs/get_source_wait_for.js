@@ -77,7 +77,24 @@ if(!selector){
 page.settings.encoding = 'utf8';
 page.settings.resourceTimeout = resource_timeout;
 
+/*
+* Accept-Encoding header should not be overwritten as of phantomjs 2.1.1
+* If overwritten, the auto decompress mechanism will no longer
+* work properly and you will get gzipped content instead of the actual
+* page content.
+*/
+var accept_encoding = headers['Accept-Encoding'];
+delete headers['Accept-Encoding'];
+
 page.customHeaders = headers;
+
+// The following code does not work, maybe a bug.
+// Doing this may seem to be working as you get auto decompressed content, but,
+// in reality, it's just a false hope. It's effectively a no-op
+// as of phantomjs 2.1.1
+// page.customHeaders["Accept-Encoding"] = accept_encoding;
+
+
 
 for(var i in cookies){
     page.addCookie(cookies[i]);
