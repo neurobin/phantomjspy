@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
-import subprocess as sbp
-import re
 import logging
+import os
+import re
+import subprocess as sbp
+
 
 class Keys(object):
     url = 'url'
@@ -16,6 +17,7 @@ class Keys(object):
     js_path = 'js_path'
     ssl_verify = 'ssl_verify'
     load_images = 'load_images'
+
 
 class Phantom(object):
 
@@ -44,7 +46,8 @@ class Phantom(object):
             self.logger.exception("E: PhantomJS command failed")
         return ''
 
-    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True, load_images=False):
+    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True, load_images=False,
+                      cookie_file=False):
         confs = json.dumps(conf)
 
         cmd = [self.exec_path]
@@ -59,19 +62,21 @@ class Phantom(object):
             cmd.append("--proxy-type=%s" % (proxy_type,))
         if proxy:
             cmd.append("--proxy=%s" % (proxy,))
-            
+        if cookie_file:
+            cmd.append("--cookies-file=%s" % (cookie_file,))
+
         if not js_path:
             cmd.extend([os.path.join(os.path.dirname(__file__), 'get_source_wait_for.js'), confs])
         else:
             cmd.extend([js_path, confs])
 
         self.logger.debug(cmd)
-        
+
         output = self.syscall(cmd)
         # output = self.syscall(['phantomjs', '-h',])
         # self.logger.debug(output)
         return output
-    
+
     @staticmethod
     def get_bounded_data(output):
         output = re.sub(r'[\s\S]*###DATA_START###', '', output, flags=re.M)
