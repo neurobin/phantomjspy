@@ -42,12 +42,12 @@ class Phantom(object):
             # print(sys.stdout.encoding)
             # proc = sbp.run(cmd, stdout=sbp.PIPE, encoding='utf-8', timeout=self.process_timeout)
             # return proc.stdout
-        except sbp.CalledProcessError as e:
+        except sbp.CalledProcessError:
             self.logger.exception("E: PhantomJS command failed")
         return ''
 
-    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True, load_images=False,
-                      cookie_file=False):
+    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True,
+                      load_images=False, cookies_file=''):
         confs = json.dumps(conf)
 
         cmd = [self.exec_path]
@@ -62,8 +62,8 @@ class Phantom(object):
             cmd.append("--proxy-type=%s" % (proxy_type,))
         if proxy:
             cmd.append("--proxy=%s" % (proxy,))
-        if cookie_file:
-            cmd.append("--cookies-file=%s" % (cookie_file,))
+        if cookies_file:
+            cmd.append("--cookies-file=%s" % (cookies_file,))
 
         if not js_path:
             cmd.extend([os.path.join(os.path.dirname(__file__), 'get_source_wait_for.js'), confs])
