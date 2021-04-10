@@ -39,7 +39,7 @@ class Phantom(object):
             if output:
                 # return output.decode('utf-8')
                 res = output.decode('utf-8')
-                if proc.returncode == 9999 and res.startswith('E: Phantom'):
+                if res.startswith('E: Phantomjs failed to open page'):
                     self.logger.error(res)
                     res = ''
                 return res

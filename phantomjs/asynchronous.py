@@ -19,7 +19,6 @@ class Phantom(object):
         """cmd is a list comprising the command and the arguments
         """
         try:
-            print(cmd)
             proc = await asyncio.create_subprocess_exec(*cmd,
                                                         stdout=asyncio.subprocess.PIPE,
                                                         stderr=asyncio.subprocess.PIPE)
@@ -31,7 +30,7 @@ class Phantom(object):
             # output = await proc.stdout.read()
             if output:
                 res: str = output.decode('utf-8')
-                if proc.returncode == 9999 and res.startswith('E: Phantom'):
+                if res.startswith('E: Phantomjs failed to open page'):
                     self.logger.error(res)
                     res = ''
                 return res
