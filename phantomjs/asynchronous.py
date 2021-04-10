@@ -1,23 +1,10 @@
-# -*- coding: utf-8 -*-
 
-import json
 import logging
+import json
 import os
 import re
-import subprocess as sbp
-
-
-class Keys(object):
-    url = 'url'
-    proxy = 'proxy'
-    proxy_type = 'proxy_type'
-    selector = 'selector'
-    max_wait = 'max_wait'
-    min_wait = 'min_wait'
-    js_path = 'js_path'
-    ssl_verify = 'ssl_verify'
-    load_images = 'load_images'
-
+import asyncio
+from typing import List, Dict, Any
 
 class Phantom(object):
 
@@ -26,34 +13,33 @@ class Phantom(object):
         self.exec_path = exec_path
         self.logger = logger
         if not self.logger:
-            self.logger = logging.getLogger(__name__)
+            self.logger = logging.getLogger(self.__class__.__name__)
 
-    def syscall(self, cmd):
+    async def syscall(self, cmd: List[str]):
         """cmd is a list comprising the command and the arguments
         """
         try:
-            proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)
-            output, errors = proc.communicate(timeout=self.process_timeout)
-            # return sbp.check_output(cmd)
+            print(cmd)
+            proc = await asyncio.create_subprocess_exec(*cmd,
+                                                        stdout=asyncio.subprocess.PIPE,
+                                                        stderr=asyncio.subprocess.PIPE)
+            # output, errors = await proc.communicate(timeout=self.process_timeout)
+            # task = asyncio.Task(proc.communicate())
+            output, errors = await asyncio.wait_for(proc.communicate(), self.process_timeout)
+            # errors = await proc.stderr.read()
             self.logger.error(errors)
+            # output = await proc.stdout.read()
             if output:
-                # return output.decode('utf-8')
-                res = output.decode('utf-8')
+                res: str = output.decode('utf-8')
                 if proc.returncode == 9999 and res.startswith('E: Phantom'):
                     self.logger.error(res)
                     res = ''
                 return res
-            # import sys
-            # print(sys.stdout.encoding)
-            # proc = sbp.run(cmd, stdout=sbp.PIPE, encoding='utf-8', timeout=self.process_timeout)
-            # return proc.stdout
-        except sbp.CalledProcessError:
-            self.logger.exception("E: PhantomJS command failed")
         except:
-            self.logger.exception("E: Unknown PhantomJS error")
+            self.logger.exception("E: PhantomJS command failed")
         return ''
 
-    def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True,
+    async def download_page(self, conf, proxy='', proxy_type='', js_path='', ssl_verify=True,
                       load_images=False, cookies_file=''):
         confs = json.dumps(conf)
 
@@ -79,9 +65,7 @@ class Phantom(object):
 
         self.logger.debug(cmd)
 
-        output = self.syscall(cmd)
-        # output = self.syscall(['phantomjs', '-h',])
-        # self.logger.debug(output)
+        output = await self.syscall(cmd)
         return output
 
     @staticmethod

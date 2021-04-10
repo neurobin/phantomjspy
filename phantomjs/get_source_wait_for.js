@@ -43,7 +43,7 @@ var headers = json.headers || {};
 var cookies = json.cookies || [];
 var output_type = json.output_type || 'html';
 var functions = json.functions || [];
-var dummy_selector = '#dummy-dummy-____dummy';
+// var dummy_selector = '#dummy-dummy-____dummy__';
 
 var printOutput = function(page){
     if(output_type.toLowerCase() == 'html'){
@@ -83,7 +83,7 @@ page.settings.resourceTimeout = resource_timeout;
 * work properly and you will get gzipped content instead of the actual
 * page content.
 */
-var accept_encoding = headers['Accept-Encoding'];
+// var accept_encoding = headers['Accept-Encoding'];
 delete headers['Accept-Encoding'];
 
 page.customHeaders = headers;
@@ -109,16 +109,16 @@ for(var i in cookies){
 // page.onError = function(msg, trace) {
 
 //     var msgStack = ['ERROR: ' + msg];
-  
+
 //     if (trace && trace.length) {
 //       msgStack.push('TRACE:');
 //       trace.forEach(function(t) {
 //         msgStack.push(' -> ' + t.file + ': ' + t.line + (t.function ? ' (in function "' + t.function +'")' : ''));
 //       });
 //     }
-  
+
 //     console.error(msgStack.join('\n'));
-  
+
 //   };
 
 // page.onResourceError = function(resourceError) {
@@ -159,6 +159,6 @@ page.open(url, function (status) {
         // phantom.exit();
     } else{
         console.log("E: Phantomjs failed to open page: " + url);
-        phantom.exit();
+        phantom.exit(9999);
     }
 });
