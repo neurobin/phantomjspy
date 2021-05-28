@@ -35,7 +35,8 @@ class Phantom(object):
             proc = sbp.Popen(cmd, stdout=sbp.PIPE, stderr=sbp.PIPE)
             output, errors = proc.communicate(timeout=self.process_timeout)
             # return sbp.check_output(cmd)
-            self.logger.error(errors)
+            if errors:
+                self.logger.error(errors)
             if output:
                 # return output.decode('utf-8')
                 res = output.decode('utf-8')
